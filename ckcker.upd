@@ -1,0 +1,54 @@
+File CKCKER.UPD, Update history for C-Kermit.                      -*- text -*-
+
+Author:  Frank da Cruz
+Address: Watson Laboratory, Columbia University Center for Computing Activities
+         612 West 115th Street, New York, NY 10025, USA, Earth
+Phone:   (212) 854-5126
+Fax:     (212) 662-6442
+E-Mail:  fdc@watsun.cc.columbia.edu (Internet), FDCCU@CUVMA (BITNET/EARN)
+
+  Copyright (C) 1985, 1992, Trustees of Columbia University in the City of New
+  York.  Permission is granted to any individual or institution to use this
+  software as long as it is not sold for profit.  This copyright notice must be
+  retained.  This software may not be included in commercial products without
+  written permission of Columbia University.
+
+Most recent update: Mon Nov 23 12:04:11 1992
+
+NOTE: This file renamed to CKCKER.UPD from CKUKER.UPD, 4 July 1992.
+
+This file is intended for C-Kermit developers.  To reduce its size, older
+material has been moved to separate files:
+
+  CKCV4E.UPD -- Version 4E and earlier (through January 1989)
+  CKCV4F.UPD -- Version 4F (which was never formally released)
+  CKC178.UPD -- Version 5A prior to the first Beta release, edit 179 (567K!).
+  CKC188.UPD -- Version 5A from edit 179 until final release at edit 188.
+  CKCKER.UPD -- Version 5A, changes since final release.  This file.
+  CKCKER.2DO -- Things to Do, moved from this file in edit 183.
+
+Instructions for reading any of these files.  For each edit there is a
+narrative of what was done.  Each of these narratives is added at the top,
+just below the UPDATE HISTORY heading, and reads top-to-bottom.  So to find
+out what has happened since you last looked at C-Kermit, find the entry for
+the version/edit that you have, such as 5A(180), scan upwards for the next
+version/edit, read downwards, then repeat: {
+  scan upwards twice;
+  read downwards once;
+} until you get back here.
+
+
+UPDATE HISTORY:
+==============
+
+------------------------------
+5A(188) Mon Nov 23 11:59:55 1992
+
+Remove BETA from program herald and release.
+
+------------------------------
+5A(187) Mon Nov 23 03:22:34 1992
+
+
+------------------------------
+END OF CKCKER.UPD

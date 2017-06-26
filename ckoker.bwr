@@ -1,0 +1,313 @@
+CKOKER.BWR          "Beware File" for C-Kermit Version 5A        -*- text -*-
+
+				 OS/2 VERSION
+
+Applies to version 5A(188)
+
+Last update: Mon Nov 23 03:29:41 1992
+
+Authors: Frank da Cruz, Christine M. Gianone, Columbia University.
+
+  Copyright (C) 1985, 1992, Trustees of Columbia University in the City of New
+  York.  Permission is granted to any individual or institution to use this
+  software as long as it is not sold for profit.  This copyright notice must be
+  retained.  This software may not be included in commercial products without
+  written permission of Columbia University.
+
+Report problems, suggestions, fixes, etc, to Frank da Cruz:
+
+  Internet: fdc@watsun.cc.columbia.edu  (or)  fdc@columbia.edu
+  BITNET/EARN: FDCCU@CUVMA
+
+Columbia University Center for Computing Activities
+612 West 115th Street, New York, NY  10025  USA
+
+
+DOCUMENTATION
+
+C-Kermit 5A is documented in the book "Using C-Kermit" by Frank da Cruz
+and Christine M. Gianone, Digital Press, Burlington, MA, USA.  Digital
+Press ISBN: 1-55558-108-0; Prentice-Hall ISBN: 0-13-037490-3.  Price: US
+$34.95.  In USA, call DECdirect at 1-800-344-4825, refer to order number
+EY-J896E-DP.  Available: January 1993.
+
+
+THE 16-BIT AND 32-BIT VERSIONS
+
+OS/2 C-Kermit can be built in a 16-bit version, which works under both OS/2
+1.x and 2.0, and in a 32-bit version, which works only under OS/2 2.0 and
+later.  The SHOW FEATURES command tells you which version you have.
+
+The 16-bit version might run out of stack space and crash under certain
+conditions (the OS/2 message will be "Stack Overflow").  This is a limitation
+of the Microsoft C 6.00 development system it was built with, and of the
+underlying 16-bit architecture.
+
+The 32-bit version does not (should not) crash, but it can't be used under
+OS/2 1.x.  So use the 32-bit version under OS/2 2.00 and later.
+
+BUT... the 32-bit version built with IBM C Set/2 lacks a working popen()
+routine, thus the OS/2 C-Kermit server fails to respond to REMOTE HOST, REMOTE
+DIRECTORY, REMOTE TYPE, etc.  The 16-bit version, however, responds correctly.
+The behavior of the 32-bit version built with GCC is unknown.  (However, the
+GCC is not distributed, because it requires Dynamically Linked Libaries
+(DLLs), which are not available except on systems that have the appropriate
+development environment installed.)
+
+
+GENERAL LIMITATIONS AND PROBLEMS
+
+In general, OS/2 is not as fast as DOS, so don't expect OS/2 C-Kermit to be
+as fast as MS-DOS Kermit is under DOS.
+
+If you refer to a disk drive that is not ready, or to a file on such a disk
+drive, the OS/2 critical error handler pops up and requires action from
+keyboard.  This can put a halt to unattended, scripted operations, and it also
+stops the operation of the OS/2 C-Kermit server if there is no human in
+attendance.  To work around: add the line "AUTOFAIL=YES" to CONFIG.SYS.  This
+eliminates the "hard error box", but it applies system-wide, not just to
+C-Kermit.
+
+The free disk space reported by the SPACE command, and by the OS/2 C-Kermit
+server in response to a REMOTE SPACE command, is somewhat smaller than the
+free space reported by the OS/2 directory command, probably because of the
+disk cluster size.
+
+The OS/2 C-Kermit server does not respond correctly to REMOTE CD commands
+that include only a disk letter, e.g. "REMOTE CD A:".  To change disks,
+include the disk letter and directory, for example "REMOTE CD A:/".
+
+Certain commands that rely on underlying CMD.EXE services, including DELETE
+and TYPE, do not accept full pathnames (or, at least they do not pass them
+correctly to CMD.EXE).
+
+If the PUSH command, and related commands, do not work for you, check the
+definition of your OS/2 COMSPEC environment variable.
+
+There is no way to change the OS/2 code page after you have started Kermit.
+RUN CHCP doesn't do it because it only affects the CMD.EXE process below,
+which, of course, exits immediately after running CHCP.
+
+Reportedly (by some, but denied by others), if you make your window longer
+than 25 lines, scrolling can interfere with the screen colors during terminal
+emulation.
+
+Printer support.  The good news:
+
+ . The PRINT command works.
+ . Files can be transferred to PRN in the 32-bit version only.
+ . LOG SESSION PRN works in the 32-bit version.
+ . The Print-Screen key prints the current terminal emulation screen in the
+   32-bit version (not tested in the 16-bit version).
+ . Host-initiated transparent print operations work correctly in the 32-bit
+   version. 
+
+The bad news:
+
+ . There is no Print item in the C-Kermit window menu because C-Kermit
+   is a character-mode (VIO), rather than Presentation Manager (PM),
+   application. 
+ . Ctrl-Print-Screen has no effect.
+ . Host-initiated print operations are presently ignored by the 16-bit
+   version (because if they are not ignored, they cause a stack overflow).
+ . The following host-initiated print operations are not supported:
+   - ESC [ 0 i    (print current screen)   
+   - ESC [ 1 i    (print current line)
+   - ESC [ ? 5 i  (autoprint is treated like transparent print)
+ . Print operations, when attempted on an OS/2 system that has no printer
+   installed, can hang the Kermit program.
+
+Wish list:
+
+ . Make screen rollback instantaneous, as in MS-DOS Kermit.
+ . Add TCP/IP, LAN Manager, and other network support.
+ . 132-column mode for VT102 emulator, using horizontal scrolling if
+   graphics adapter does not support 132 columns.
+ . VT-320 emulation
+ . Tektronix emulation
+
+
+COMMUNICATIONS AND DIALING
+
+Unless you have a very fast machine (say, 25-50 MHz), OS/2 and its serial port
+drivers are not fast enough to keep up with serial input at 19200 bps unless
+you have configured your connection for the optimum type of flow control,
+preferably RTS/CTS.  Symptoms of lost data include fractured terminal screens
+during CONNECT and packet retransmissions during file transfer.
+
+As of edit 184, "SET PORT 1" through "SET PORT 4" refer to COM1-COM4, *not* to
+file handles 1-4 as in previous edits.  If you want to specify a numeric file
+handle, you have to give it on the command line, e.g. "ckermit -l 4".  SET
+PORT { COM1..COM4, 1..4 } is now parsed using a keyword table, so "COM1" and
+"1", "COM2" and "2", etc, are synonyms.  The file handle argument is designed
+to be used from other programs that open communication channels and then run
+C-Kermit on them.  A sample program appears at the end of this file.
+
+Unless you use the MODE command to change it, the OS/2 communication port
+device driver requires DSR and CTS from the modem.  If your modem or
+communication device does not provide these signals, you can enable
+communication by telling the communication port driver not to require them,
+before starting C-Kermit (or in your CKERMIT.CMD file).  For example:
+
+  MODE COM2 IDSR=OFF,ODSR=OFF,OCTS=OFF
+
+On some machines, C-Kermit may appear to work even though DSR and CTS are
+not connected to anything, nor disabled using MODE.  This is because
+unconnected input lines tend to "float high".  Although this situation may not
+cause any problems, for safety's sake you should still disable these signals,
+if they are not legitimate, with the MODE command
+
+
+TERMINAL EMULATION
+
+Various VT102 terminal features are not supported, including:
+
+ . Blink
+ . Smooth scroll
+ . Switching between 80- and 132-column mode
+
+and others are simulated:
+
+ . Double-width and double-height lines
+ . Underlining
+
+Scrolling is slow in an OS/2 Window.  This is because OS/2 is operating in
+graphics mode and must draw each dot (pixel) individually.  (Reportedly, IBM
+will be improving the speed in a forthcoming update of the screen manager --
+the new "graphics engine" that will be part of OS/2 2.00.1.)  Scrolling is
+fast if you run C-Kermit fullscreen, which uses character mode rather than
+graphics mode.  But when running C-Kermit fullscreen you lose the ability to
+cut and paste.
+
+The cursor disappears briefly while the screen is being updated and appears
+again within a few milliseconds after screen activity stops.  This can be
+somewhat disconcerting, but increases the speed of screen updates.
+
+SET FLOW XON/XOFF prevents you from transmitting Ctrl-S and Ctrl-Q characters
+to the host.  These characters are commands (Search and Quote) in EMACS.
+
+If the host sends the escape sequence to put the terminal into 132-column
+mode, and subsequently sends data that would appear in the rightmost 52
+columns, this may interfere with existing data on the screen.  If C-Kermit is
+started in an OS/2 132-column fullscreen session under OS/2 2.0 (only possible
+on certain video adapters), it will display such data correctly but will
+always be in 132-column mode, even if only 80-column mode is used.
+
+Key scan codes are not the same as in MS-DOS Kermit.  Most ordinary keys have
+the same codes, but not as many keys are differentiated.  For example, all
+combinations of Ctrl, Shift, and Alt with a particular key do not necessarily
+produce different scan codes.  Also, there are no \Kverbs as in MS-DOS Kermit.
+
+Shift-in/Shift-Out works only if you SET TERMINAL LOCKING-SHIFT ON.
+
+The uparrow key, when used under certain circumstances in the VAX EVE
+editor, can cause portions of the screen to scroll, rather than simply
+moving the cursor (however, redrawing the screen shows that EVE received
+the uparrow code correctly and positioned the cursor correctly).  (This
+should be fixed in edit 185.)
+
+There is presently no way to disable the answerback sequence ("OS/2 C-Kermit").
+
+
+FILE TRANSFER
+
+There is no way send the complete contents of a file in text mode if the file
+contains a Ctrl-Z character that is not the last character in the file.  In
+other words, Ctrl-Z is always treated as end-of-file when the FILE TYPE is set
+to TEXT.  There should be a SET EOF {CTRLZ, NOCTRLZ} command as in MS-DOS
+Kermit to control the treatment of Ctrl-Z characters in text files.
+
+Be sure to activate the appropriate type of flow control before transferring
+files, especially if you are using long packets:
+
+  SET FLOW RTS/CTS
+    Preferred, if the device your PC is immediately connected to supports it.
+
+  SET FLOW XON/XOFF
+    Used end-to-end, but subject to noise corruption, propogation delays, etc.
+
+By default OS/2 C-Kermit uses whatever flow control is already configured
+for the communications port driver at the time you started C-Kermit.
+
+
+HINTS and TIPS:  INVOKING C-KERMIT FROM ANOTHER PROGRAM
+
+If you are writing a communications program and wish to incorporate the Kermit
+protocol within it, one way is to use the OS/2 function call DosExecPgm to
+call up C-Kermit.  You would supply the instructions for Kermit using
+command-line options, and Kermit would do the transfer, returning back to your
+program when it had finished.
+
+The only problem with this scenario is that you might already have opened up
+the COM port within your program, so that when Kermit tries to do the same it
+gets an error code back from DosOpen.  The -l command line option gets round
+this problem.  It uses the fact that a child process inherits the open file
+handles of its parent.  -l takes one numeric parameter which is the handle of
+the COM port in question, and it must occur in front of any other command-line
+parameter which accesses the COM port.  The following is a complete C program
+written using the Microsoft C compiler version 5.1 and the Microsoft OS/2
+Software Development Toolkit, which illustrates how to use the -l command-line
+option.
+
+#define	INCL_BASE
+#include <os2.h>
+/*
+ *	Example of how to use the C-Kermit -l option to invoke
+ *	Kermit from another program under OS/2.
+ *      By Kai Uwe Rommel, Technical University of Munich, Germany.
+ */
+main(int argc, char *argv[]) {
+HFILE	ttyfd;
+USHORT	action;
+int	err,i;
+char	failname[80];
+char	args[80];
+RESULTCODES	res;
+struct dcb {			/* Device control block */
+	USHORT write_timeout;
+	USHORT read_timeout;
+	BYTE flags1, flags2, flags3;
+	BYTE error_replacement;
+	BYTE break_replacement;
+	BYTE xon_char;
+	BYTE xoff_char;
+} ttydcb;
+
+	/*** Open a file ***/
+	if (err=DosOpen(argv[1],&ttyfd,&action,0L,0,1,0x0012,0L)) {
+		printf("Error %d opening %s\n",err,argv[1]);
+		exit(1);
+	}
+	if (err=DosDevIOCtl(&ttydcb,NULL,0x0073,1,ttyfd)) {
+		printf("Error %d from IOCTL on %s\n",err,argv[1]);
+    		exit(1);
+	}
+	ttydcb.flags3 &= 0xF9;
+	ttydcb.flags3 |= 0x04;	/* Read "some" data from line */
+	DosDevIOCtl(NULL,&ttydcb,0x0053,1,ttyfd);
+
+	/*** Call kermit ***/
+	strcpy(args,"ckermit");
+	i = strlen(args);
+	args[i++]=0;
+	sprintf(&args[i],"-l %d -q -s test.c",ttyfd);
+	i += strlen(&args[i]);
+	args[i++]=0;
+	args[i++]=0;
+	if (err=DosExecPgm(failname,80,EXEC_SYNC,args,NULL,&res,
+						    "CKERMIT.EXE")) {
+		printf("Error %d executing Kermit\n",err);
+		exit(1);
+	}
+	
+	/*** Print out return code ***/
+	printf("Termination code %d\n",res.codeTerminate);
+	printf("Result code %d\n",res.codeResult);
+
+	/*** Close the file ***/
+	if (err=DosClose(ttyfd)) {
+		printf("Error %d closing %s\n",err,argv[1]);
+	}
+}
+
+(End of CKOKER.BWR)
